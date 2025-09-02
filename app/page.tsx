@@ -1,7 +1,9 @@
+import Link from 'next/link'
+
 export default function Home() {
-  return (
-    <div>
-      <h1>Reset</h1>
-  </div>
-  );
+	return (
+		<div>
+			<Link href={'/task-1'}>Task - 1</Link>
+		</div>
+	)
 }
