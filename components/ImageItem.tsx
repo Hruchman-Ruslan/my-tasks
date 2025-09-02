@@ -7,6 +7,7 @@ interface ImageItemProps {
   title: string;
   index: number;
   onImageClick: (index: number) => void;
+  onDelete: (index: number) => void;
 }
 
 export default function ImageItem({
@@ -14,6 +15,7 @@ export default function ImageItem({
   title,
   index,
   onImageClick,
+  onDelete,
 }: ImageItemProps) {
   return (
     <li className={cn("flex flex-col")}>
@@ -45,6 +47,20 @@ export default function ImageItem({
         onClick={() => console.log(`Clicked on ${title}`)}
       >
         {title}
+      </button>
+      <button
+        className={cn(
+          "mt-1 text-center text-lg font-bold text-red-500",
+          "cursor-pointer transition-all duration-200 hover:scale-110 hover:text-red-700",
+          "select-none",
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(index);
+        }}
+        title={`Delete ${title}`}
+      >
+        ✕
       </button>
     </li>
   );
