@@ -1,8 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState } from "react";
 
-import { cn } from "@/utils/cn";
+import { cn, formatDateTime } from "@/utils";
+
+import Modal from "@/components/Modal";
+import ImageList from "@/components/ImageList";
 
 import item_1 from "/public/1.jpg";
 import item_2 from "/public/2.jpg";
@@ -33,48 +36,63 @@ const images = [
 ];
 
 export default function SecondTask() {
-  return (
-    <section className={cn("mt-8 flex flex-col items-center")}>
-      <h1 className={cn("mb-8 text-2xl font-bold")}>Task - 2</h1>
+  const [imageCount, setImageCount] = useState(0);
+  const [currentDateTime, setCurrentDateTime] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-      <ul
-        className={cn(
-          "grid w-4/5 grid-cols-4 gap-4 max-[900px]:grid-cols-2 max-[500px]:grid-cols-1",
-        )}
-      >
-        {images.map(({ src, title }, index) => (
-          <li key={index} className={cn("flex flex-col")}>
-            <div
-              className={cn(
-                "aspect-square overflow-hidden rounded-lg border-4 transition-colors duration-300",
-                "hover:border-yellow-500",
-                index % 4 === 0 ? "border-red-600" : "border-gray-700",
-              )}
-            >
-              <Image
-                src={src}
-                alt={title}
-                width={300}
-                height={300}
-                priority
-                className={cn(
-                  "h-full w-full object-cover transition-transform duration-300",
-                  "hover:rotate-45",
-                )}
-              />
-            </div>
-            <button
-              className={cn(
-                "mt-2 text-center text-sm font-medium text-blue-600",
-                "cursor-pointer hover:text-blue-800 hover:underline",
-              )}
-              onClick={() => console.log(`Clicked on ${title}`)}
-            >
-              {title}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
+  const openModal = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1,
+    );
+  };
+
+  useEffect(() => {
+    setImageCount(images.length);
+
+    const updateDateTime = () => {
+      const now = new Date();
+      setCurrentDateTime(formatDateTime(now));
+    };
+
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <>
+      <section className={cn("mt-8 flex flex-col items-center")}>
+        <h1 className={cn("mb-8 text-2xl font-bold")}>Task - 2</h1>
+
+        <div className={cn("mb-6 text-center")}>
+          <span className={cn("mb-2 block text-lg font-semibold")}>
+            Counter images: {imageCount}
+          </span>
+          <span className={cn("block text-sm text-gray-600")}>
+            Current data and time: {currentDateTime}
+          </span>
+        </div>
+
+        <ImageList images={images} onImageClick={openModal} />
+      </section>
+
+      <Modal
+        isOpen={isModalOpen}
+        images={images}
+        currentIndex={currentImageIndex}
+        onClose={closeModal}
+        onNext={nextImage}
+      />
+    </>
   );
 }
