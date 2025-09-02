@@ -12,9 +12,14 @@ interface ImageListItem {
 interface ImageListProps {
   images: ImageListItem[];
   onImageClick: (index: number) => void;
+  onDelete: (index: number) => void;
 }
 
-export default function ImageList({ images, onImageClick }: ImageListProps) {
+export default function ImageList({
+  images,
+  onImageClick,
+  onDelete,
+}: ImageListProps) {
   return (
     <ul
       className={cn(
@@ -28,6 +33,7 @@ export default function ImageList({ images, onImageClick }: ImageListProps) {
           title={title}
           index={index}
           onImageClick={onImageClick}
+          onDelete={onDelete}
         />
       ))}
     </ul>
