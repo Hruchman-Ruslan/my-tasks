@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect } from "react";
 
+import { cn } from "@/utils";
+
 import { fetchUniversities } from "@/actions/universities";
 import { useLocalUniversities } from "@/hooks/useLocalUniversities";
 
@@ -16,6 +18,7 @@ export default function ThirdTask() {
     setUniversities,
     toggleSave,
     savedCount,
+    reset,
   } = useLocalUniversities();
 
   const [state, formAction, isPending] = useActionState(fetchUniversities, {
@@ -32,32 +35,37 @@ export default function ThirdTask() {
   }, [state, country, setCountry, setUniversities]);
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="mb-8 text-center text-3xl font-bold text-gray-800">
+    <section className={cn("min-h-screen bg-gray-50 px-4 py-8")}>
+      <div className={cn("mx-auto max-w-6xl")}>
+        <h1 className={cn("mb-8 text-center text-3xl font-bold text-gray-800")}>
           Search Universities by Country
         </h1>
 
         {universities.length > 0 && (
-          <div className="mb-6 rounded-lg bg-blue-100 p-4 text-center text-lg font-semibold text-blue-800">
+          <div
+            className={cn(
+              "mb-6 rounded-lg bg-blue-100 p-4 text-center text-lg font-semibold text-blue-800",
+            )}
+          >
             Saved: {savedCount}
           </div>
         )}
 
-        <div className="mx-auto mb-6 max-w-md">
+        <div className={cn("mx-auto mb-6 max-w-md")}>
           <UniversitySearchForm
             formAction={formAction}
             isPending={isPending}
             defaultCountry={country}
-            onReset={() => {
-              setCountry("");
-              setUniversities([]);
-            }}
+            onReset={reset}
           />
         </div>
 
         {state.error && (
-          <div className="mb-6 rounded-lg border border-red-400 bg-red-100 p-4 text-red-700">
+          <div
+            className={cn(
+              "mb-6 rounded-lg border border-red-400 bg-red-100 p-4 text-red-700",
+            )}
+          >
             {state.error}
           </div>
         )}
@@ -69,6 +77,6 @@ export default function ThirdTask() {
           />
         )}
       </div>
-    </div>
+    </section>
   );
 }
