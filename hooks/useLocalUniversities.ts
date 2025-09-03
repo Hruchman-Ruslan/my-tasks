@@ -10,6 +10,7 @@ interface LocalState {
 export function useLocalUniversities(initialCountry = "") {
   const [country, setCountry] = useState(initialCountry);
   const [universities, setUniversities] = useState<SavedUniversity[]>([]);
+  const [skipSave, setSkipSave] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem("universitiesAppState");
@@ -25,15 +26,26 @@ export function useLocalUniversities(initialCountry = "") {
   }, []);
 
   useEffect(() => {
+    if (skipSave) {
+      setSkipSave(false);
+      return;
+    }
     const data: LocalState = { country, universities };
     localStorage.setItem("universitiesAppState", JSON.stringify(data));
-  }, [country, universities]);
+  }, [country, universities, skipSave]);
 
   const toggleSave = (index: number) => {
     const updated = universities.map((u, i) =>
       i === index ? { ...u, saved: !u.saved } : u,
     );
     setUniversities(updated);
+  };
+
+  const reset = () => {
+    setSkipSave(true);
+    setCountry("");
+    setUniversities([]);
+    localStorage.removeItem("universitiesAppState");
   };
 
   const savedCount = universities.filter((u) => u.saved).length;
@@ -45,5 +57,6 @@ export function useLocalUniversities(initialCountry = "") {
     setUniversities,
     toggleSave,
     savedCount,
+    reset,
   };
 }
